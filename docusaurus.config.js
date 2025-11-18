@@ -49,8 +49,8 @@ const config = {
           sidebarPath: './sidebars.js',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          // editUrl:
-          //   'https://github.com/swietoolsky/swietoolsky-docu/tree/main/',
+          editUrl:
+            'https://github.com/berchri/swietoolsky-wiki/tree/main/',
           routeBasePath: '/', // Serve docs from the base URL
         },
         blog: false, // Disable blog since we're using root path for docs

@@ -1,0 +1,98 @@
+variables:
+- group: Sharepoint-Variables
+
+steps:
+- task: PowerShell@2
+  displayName: 'Full clean of docs folder'
+  inputs:
+    targetType: 'inline'
+    script: |
+      $docsPath = "$(Build.SourcesDirectory)/docs"
+      if (Test-Path $docsPath) {
+        Write-Host "Removing entire docs folder..."
+        Remove-Item -Path $docsPath -Recurse -Force
+      }
+      Write-Host "Creating fresh docs directory..."
+      New-Item -Path $docsPath -ItemType Directory -Force
+
+- task: DownloadSecureFile@1
+  name: pfxCertificate
+  displayName: 'Download PFX Certificate'
+  inputs:
+    secureFile: 'SwietoolskyApp.pfx'  # Replace with your secure file name
+
+- task: PowerShell@2
+  displayName: 'Download SharePoint Docs'
+  inputs:
+    targetType: 'inline'
+    script: |
+      # Install PnP PowerShell if not available
+      if (-not (Get-Module -ListAvailable -Name PnP.PowerShell)) {
+        Install-Module -Name PnP.PowerShell -Force -AllowClobber -Scope CurrentUser
+      }
+      
+      $siteUrl = "https://swietelskylnz.sharepoint.com/teams/DigitalisationConstructionServices"
+      $zipFileUrl = "/teams/DigitalisationConstructionServices/Freigegebene%20Dokumente/BIM%20Design%20and%20Engineering/Swietoolsky/documentation/tutorial.zip"
+      $targetPath = "$(Build.SourcesDirectory)/docs"
+      $tempZipPath = "$(Agent.TempDirectory)/tutorial.zip"
+      $pfxPath = "$(pfxCertificate.secureFilePath)"
+      
+      try {
+        $securePassword = ConvertTo-SecureString -String $env:CERT_PASSWORD -AsPlainText -Force
+        Connect-PnPOnline -Url $siteUrl -ClientId $env:CLIENT_ID -CertificatePath $pfxPath -CertificatePassword $securePassword -Tenant $env:TENANT_ID -WarningAction Ignore
+        
+        Get-PnPFile -Url $zipFileUrl -Path (Split-Path $tempZipPath -Parent) -FileName (Split-Path $tempZipPath -Leaf) -AsFile
+        
+        Expand-Archive -LiteralPath $tempZipPath -DestinationPath $targetPath -Force
+        Remove-Item -Path $tempZipPath -Force
+        
+        Write-Host "SharePoint docs downloaded and extracted successfully"
+      }
+      catch {
+        Write-Error "Error: $($_.Exception.Message)"
+        exit 1
+      }
+      finally {
+        Disconnect-PnPOnline -ErrorAction SilentlyContinue
+      }
+  env:
+    CLIENT_ID: $(ClientId)
+    CERT_PASSWORD: $(CertPassword)
+    TENANT_ID: $(TenantId)
+
+- task: Npm@1
+  displayName: 'npm install'
+  inputs:
+    command: 'install'
+
+- task: Npm@1
+  displayName: 'npm run build'
+  inputs:
+    command: 'custom'
+    customCommand: 'run build'
+
+- task: CopyFiles@2
+  inputs:
+    sourceFolder: '$(Build.SourcesDirectory)'
+    contents: 'web.config'
+    targetFolder: 'build'
+    overWrite: true
+  displayName: 'Copy web.config to build directory'
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: 'build'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/website.zip'
+    replaceExistingArchive: true
+  displayName: 'Archive website files'
+  condition: succeeded()
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: 'website-archive'
+    publishLocation: 'Container'
+  displayName: 'Publish archived build artifacts'
+  condition: succeeded()

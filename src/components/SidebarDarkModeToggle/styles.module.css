@@ -1,0 +1,96 @@
+.darkModeToggle {
+  margin: 1rem;
+  padding: 0.75rem;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.toggleContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.toggleSwitch {
+  position: relative;
+  width: 50px;
+  height: 26px;
+  border: none;
+  border-radius: 13px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toggleSwitch.light {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+}
+
+.toggleSwitch.dark {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+}
+
+.toggleSwitch:hover {
+  transform: scale(1.05);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.toggleSwitch:active {
+  transform: scale(0.98);
+}
+
+.toggleSlider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  background: white;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.toggleSwitch.dark .toggleSlider {
+  transform: translateX(24px);
+}
+
+.sliderIcon {
+  font-size: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+/* Dark theme adjustments */
+[data-theme='dark'] .toggleSwitch {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme='dark'] .toggleSlider {
+  background: var(--ifm-background-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .toggleContainer {
+    gap: 0.5rem;
+  }
+  
+  .toggleSwitch {
+    width: 44px;
+    height: 24px;
+  }
+  
+  .toggleSlider {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .toggleSwitch.dark .toggleSlider {
+    transform: translateX(20px);
+  }
+}

@@ -23,7 +23,7 @@ Mit dem Editor eurer Wahl können die Markdown `.md` Dateien bearbeitet werden. 
 
 ![Swietelsky Logo](./img/swietelsky-logo.svg)
 
-
+![enter image description here](./img/swietelsky-logo.svg)
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIyNzkxNDU3M119
+eyJoaXN0b3J5IjpbLTEyMDk4Njk2NjUsLTIyNzkxNDU3M119
 -->

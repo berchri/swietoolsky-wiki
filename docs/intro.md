@@ -22,3 +22,8 @@ Dies ist ein Beispiel einer Dokumentation und gleichzeitig eine Anleitung. Die D
 Mit dem Editor eurer Wahl können die Markdown `.md` Dateien bearbeitet werden. Die Ordnerstruktur bestimmt die Navigation in der Seitenleiste. Genaueres unter [Configuration Guide](./tutorial-basics/create-a-document.md)
 
 ![Swietelsky Logo](./img/swietelsky-logo.svg)
+
+
+<!--stackedit_data:
+eyJoaXN0b3J5IjpbLTIyNzkxNDU3M119
+-->
